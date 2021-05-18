@@ -168,7 +168,7 @@ class CoWinBook():
     # Request for Current Slot Deatails ( Private Request )
     def request_slot(self):
         todayDate = datetime.now().strftime("%d-%m-%Y")
-        response = self.session.get(f'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByPin?pincode={self.pincode}&date={todayDate}')
+        response = self.session.get(f'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict?district_id={self.pincode}&date={todayDate}')
 
         if response.ok:
             self.check_slot(response.json())
