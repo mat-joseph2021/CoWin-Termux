@@ -32,6 +32,7 @@ class CoWinBook():
         # Vaccination Center id and Session id for Slot Booking
         self.vacc_center = None
         self.vacc_session = None
+        self.slot_time = None
 
         # Dose 1 or Dose 2 ( default : 1)
         self.dose = dose
@@ -168,7 +169,10 @@ class CoWinBook():
     # Request for Current Slot Deatails ( Private Request )
     def request_slot(self):
         todayDate = datetime.now().strftime("%d-%m-%Y")
-        response = self.session.get(f'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict?district_id={self.pincode}&date={todayDate}')
+        if len(self.pincode) > 5:
+            response = self.session.get(f'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByPin?pincode={self.pincode}&date={todayDate}')
+        else:
+            response = self.session.get(f'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict?district_id={self.pincode}&date={todayDate}')
 
         if response.ok:
             self.check_slot(response.json())
@@ -186,6 +190,7 @@ class CoWinBook():
                 
                 self.vacc_center = center.get('center_id')
                 self.vacc_session = session.get("session_id")
+                self.slot_time = session.get('slots')[0]
 
                 center_name = center.get('name')
                 capacity = session.get('available_capacity')
@@ -217,6 +222,10 @@ class CoWinBook():
         # Send request for Captcha    
         data = '{}'
         response = self.session.post('https://cdn-api.co-vin.in/api/v2/auth/getRecaptcha', data=data)
+
+        if not response.ok:
+            self.login_cowin()
+            return self.get_captcha()
 
         # Get Captcha Data from Json
         svg_data = response.json()['captcha']
@@ -254,7 +263,7 @@ class CoWinBook():
             "center_id":self.vacc_center ,
             "session_id":self.vacc_session,
             "beneficiaries":self.user_id,
-            "slot":"09:00AM-11:00AM",
+            "slot":self.slot_time,
             "captcha": captcha,
             "dose": self.dose
             }
@@ -281,6 +290,7 @@ class CoWinBook():
 
     # Set details about Vaacination Center and User Id
     def setup_details(self):
+        
         self.select_center()
         self.select_beneficiaries()
 
@@ -380,18 +390,24 @@ class CoWinBook():
         self.user_id = USER_ID
 
  
-def main(mobile_no,pincode, age = 18,dose = 1,time = 1,fast = None):
+def main(mobile_no,pincode, age = 18,dose = 1,time = 30,fast = None):
+
+    # Correct Age
+    age =  18 if age < 45 else 45
+
+    # Max 30 Seconds
+    time = 30 if time > 30 else time
 
     global cowin
     cowin = CoWinBook(mobile_no,pincode,age,dose)
 
-    print(f" 📍 {pincode} 💉 {age}+ ⌛️ {time} Minute")
 
     try:
         if fast:cowin.book_now()
     except SchedulerNotRunningError: return
 
-    scheduler.add_job(cowin.book_now, 'cron',hour = "8-21", minute = f'0-59/{time}')
+    scheduler.add_job(cowin.book_now, 'cron', second = f'*/{time}')
+    print(f" 📍 {pincode} 💉 {age}+ ⌛️ {time} Seconds")
 
 
 if __name__ == '__main__':
@@ -404,4 +420,3 @@ if __name__ == '__main__':
     line_break()
 
     scheduler.start()
-
