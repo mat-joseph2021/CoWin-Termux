@@ -169,7 +169,7 @@ class CoWinBook():
     # Request for Current Slot Deatails ( Private Request )
     def request_slot(self):
         todayDate = datetime.now().strftime("%d-%m-%Y")
-        if len(self.pincode) > 5:
+        if len(str(self.pincode)) > 5:
             response = self.session.get(f'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByPin?pincode={self.pincode}&date={todayDate}')
         else:
             response = self.session.get(f'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict?district_id={self.pincode}&date={todayDate}')
