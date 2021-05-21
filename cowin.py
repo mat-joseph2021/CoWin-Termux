@@ -412,7 +412,6 @@ def main(mobile_no,pincode, age = 18,dose = 1,time = 30,fast = None):
     # Max 30 Seconds
     time = 30 if time > 30 else time
     
-    global login_time
     login_time = time.time()
 
     global cowin
