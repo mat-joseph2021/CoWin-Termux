@@ -16,7 +16,7 @@ import os
 
 ua = UserAgent()
 scheduler = BlockingScheduler()
-login_time = 0
+login_time = time.time()
 
 def line_break(): print("-"*25)
 
@@ -106,6 +106,7 @@ class CoWinBook():
 
         otpSha265 = self.get_otp()
         login_time = time.time()
+        print("Time updated to: " + str(login_time))
 
         txn_id = response.json()['txnId']
 
