@@ -16,7 +16,8 @@ import os
 
 ua = UserAgent()
 scheduler = BlockingScheduler()
-
+global login_time
+login_time = time.time()
 
 def line_break(): print("-"*25)
 
@@ -124,7 +125,6 @@ class CoWinBook():
 
     # Request for OTP 
     def get_otp(self):
-        login_time = time.time()
         print("Login Time value: " + str(login_time))
         print("OTP Sent 📲 ... ")
 
@@ -180,6 +180,7 @@ class CoWinBook():
             self.check_slot(response.json())
         elif int(time.time() - login_time) > 885:
             print("Re-login Account due to 15-min_1: " + datetime.now().strftime("%H:%M:%S") + " 🤳")
+            login_time = time.time()
             self.login_cowin()
             self.request_slot()
         elif response.status_code == 401:
