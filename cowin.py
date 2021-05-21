@@ -105,7 +105,6 @@ class CoWinBook():
         response = self.session.post('https://cdn-api.co-vin.in/api/v2/auth/generateMobileOTP',data=self.get_data())
 
         otpSha265 = self.get_otp()
-        login_time = time.time()
         print("Time updated to: " + str(login_time))
 
         txn_id = response.json()['txnId']
@@ -126,7 +125,8 @@ class CoWinBook():
 
     # Request for OTP 
     def get_otp(self):
-         
+        login_time = time.time()
+        print("Login Time value: " + str(login_time))
         print("OTP Sent 📲 ... ")
 
         otp = ""
