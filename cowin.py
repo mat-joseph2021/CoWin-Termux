@@ -16,6 +16,7 @@ import os
 
 ua = UserAgent()
 scheduler = BlockingScheduler()
+login_time = 0
 
 def line_break(): print("-"*25)
 
@@ -119,6 +120,7 @@ class CoWinBook():
         self.session.headers.update({
             'Authorization': 'Bearer {}'.format(self.bearerToken)
         })
+        login_time = time.time()
         self.putSession() 
 
     # Request for OTP 
@@ -176,8 +178,12 @@ class CoWinBook():
 
         if response.ok:
             self.check_slot(response.json())
+        elif int(time.time() - login_time) > 885:
+            print("Re-login Account due to 15-min: " + datetime.now().strftime("%H:%M:%S") + " 🤳")
+            self.login_cowin()
+            self.request_slot()
         elif response.status_code == 401:
-            print("Re-login Account : " + datetime.now().strftime("%H:%M:%S") + " 🤳")
+            print("Re-login Account due to 401 : " + datetime.now().strftime("%H:%M:%S") + " 🤳")
             self.login_cowin()
             self.request_slot()
 
@@ -288,7 +294,7 @@ class CoWinBook():
     def book_now(self):
         self.request_slot()
 
-    # Set details about Vaacination Center and User Id
+    # Set details about Vaccination Center and User Id
     def setup_details(self):
         
         self.select_center()
@@ -296,9 +302,13 @@ class CoWinBook():
 
     # Select Center for Vaccination
     def select_center(self):
-
-        response = self.session.get(
-            'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByPin?pincode={}&date={}'.format(self.pincode,self.todayDate),
+        if len(str(self.pincode)) > 5:
+            response = self.session.get(
+                'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByPin?pincode={}&date={}'.format(self.pincode,self.todayDate),
+            ).json()
+        else:
+            response = self.session.get(
+                'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict?district_id={}&date={}'.format(self.pincode,self.todayDate),
             ).json()
 
         CENTERS = {}
