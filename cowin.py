@@ -190,6 +190,7 @@ class CoWinBook():
     # Check Slot availability 
     def check_slot(self,response):
         if int(time.time() - login_time) > 885:
+            print ("Login time diff: "+ str(time.time() - login_time))
             print("Re-login Account due to 15-min_2: " + datetime.now().strftime("%H:%M:%S") + " 🤳")
             self.login_cowin()
 
