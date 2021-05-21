@@ -16,7 +16,7 @@ import os
 
 ua = UserAgent()
 scheduler = BlockingScheduler()
-login_time = time.time()
+
 
 def line_break(): print("-"*25)
 
@@ -105,7 +105,6 @@ class CoWinBook():
         response = self.session.post('https://cdn-api.co-vin.in/api/v2/auth/generateMobileOTP',data=self.get_data())
 
         otpSha265 = self.get_otp()
-        print("Time updated to: " + str(login_time))
 
         txn_id = response.json()['txnId']
 
@@ -412,10 +411,12 @@ def main(mobile_no,pincode, age = 18,dose = 1,time = 30,fast = None):
 
     # Max 30 Seconds
     time = 30 if time > 30 else time
+    
+    global login_time
+    login_time = time.time()
 
     global cowin
     cowin = CoWinBook(mobile_no,pincode,age,dose)
-
 
     try:
         if fast:cowin.book_now()
