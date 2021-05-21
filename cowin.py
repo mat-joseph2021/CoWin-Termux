@@ -16,8 +16,7 @@ import os
 
 ua = UserAgent()
 scheduler = BlockingScheduler()
-global login_time
-login_time = time.time()
+
 
 def line_break(): print("-"*25)
 
@@ -193,7 +192,9 @@ class CoWinBook():
         if int(time.time() - login_time) > 885:
             print ("Login time diff: "+ str(time.time() - login_time))
             print("Re-login Account due to 15-min_2: " + datetime.now().strftime("%H:%M:%S") + " 🤳")
+            login_time = time.time()
             self.login_cowin()
+
 
         for center in response.get('centers',[]):
             
