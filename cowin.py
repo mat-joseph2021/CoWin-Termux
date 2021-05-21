@@ -16,8 +16,7 @@ import os
 
 ua = UserAgent()
 scheduler = BlockingScheduler()
-global login_time
-login_time = time.time()
+
 
 def line_break(): print("-"*25)
 
@@ -97,7 +96,6 @@ class CoWinBook():
 
     # Login to selfregistration.cowin.gov.in/
     def login_cowin(self):
-        login_time = time.time()
 
         self.data = {
         "secret":"U2FsdGVkX1+gGN13ULaCVtLSWmsyZwAdXXTIAvLQp2HOXrIBCcq0yyOZQqzzfiFiEYs7KoAOTK2j4qPF/sEVww==",
@@ -126,7 +124,6 @@ class CoWinBook():
 
     # Request for OTP 
     def get_otp(self):
-        print("Login Time value: " + str(login_time))
         print("OTP Sent 📲 ... ")
 
         otp = ""
@@ -179,11 +176,6 @@ class CoWinBook():
 
         if response.ok:
             self.check_slot(response.json())
-        elif int(time.time() - login_time) > 885:
-            print("Re-login Account due to 15-min_1: " + datetime.now().strftime("%H:%M:%S") + " 🤳")
-            login_time = time.time()
-            self.login_cowin()
-            self.request_slot()
         elif response.status_code == 401:
             print("Re-login Account due to 401 : " + datetime.now().strftime("%H:%M:%S") + " 🤳")
             self.login_cowin()
@@ -191,12 +183,6 @@ class CoWinBook():
 
     # Check Slot availability 
     def check_slot(self,response):
-        if int(time.time() - login_time) > 885:
-            print ("Login time diff: "+ str(time.time() - login_time))
-            print("Re-login Account due to 15-min_2: " + datetime.now().strftime("%H:%M:%S") + " 🤳")
-            login_time = time.time()
-            self.login_cowin()
-
 
         for center in response.get('centers',[]):
             
