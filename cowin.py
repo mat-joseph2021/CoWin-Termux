@@ -105,6 +105,7 @@ class CoWinBook():
         response = self.session.post('https://cdn-api.co-vin.in/api/v2/auth/generateMobileOTP',data=self.get_data())
 
         otpSha265 = self.get_otp()
+        login_time = time.time()
 
         txn_id = response.json()['txnId']
 
@@ -120,7 +121,6 @@ class CoWinBook():
         self.session.headers.update({
             'Authorization': 'Bearer {}'.format(self.bearerToken)
         })
-        login_time = time.time()
         self.putSession() 
 
     # Request for OTP 
@@ -179,7 +179,7 @@ class CoWinBook():
         if response.ok:
             self.check_slot(response.json())
         elif int(time.time() - login_time) > 885:
-            print("Re-login Account due to 15-min: " + datetime.now().strftime("%H:%M:%S") + " 🤳")
+            print("Re-login Account due to 15-min_1: " + datetime.now().strftime("%H:%M:%S") + " 🤳")
             self.login_cowin()
             self.request_slot()
         elif response.status_code == 401:
@@ -190,9 +190,9 @@ class CoWinBook():
     # Check Slot availability 
     def check_slot(self,response):
         if int(time.time() - login_time) > 885:
-            print("Re-login Account due to 15-min: " + datetime.now().strftime("%H:%M:%S") + " 🤳")
+            print("Re-login Account due to 15-min_2: " + datetime.now().strftime("%H:%M:%S") + " 🤳")
             self.login_cowin()
-            self.request_slot()
+            self.check_slot()
 
         for center in response.get('centers',[]):
             
