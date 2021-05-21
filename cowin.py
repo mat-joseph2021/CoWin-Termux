@@ -16,7 +16,7 @@ import os
 
 ua = UserAgent()
 scheduler = BlockingScheduler()
-global login_time = 0
+login_time = 0
 
 def line_break(): print("-"*25)
 
