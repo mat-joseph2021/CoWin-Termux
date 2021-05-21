@@ -97,6 +97,7 @@ class CoWinBook():
 
     # Login to selfregistration.cowin.gov.in/
     def login_cowin(self):
+        login_time = time.time()
 
         self.data = {
         "secret":"U2FsdGVkX1+gGN13ULaCVtLSWmsyZwAdXXTIAvLQp2HOXrIBCcq0yyOZQqzzfiFiEYs7KoAOTK2j4qPF/sEVww==",
