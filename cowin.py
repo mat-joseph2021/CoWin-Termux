@@ -170,9 +170,9 @@ class CoWinBook():
     def request_slot(self):
         todayDate = datetime.now().strftime("%d-%m-%Y")
         if len(str(self.pincode)) > 5:
-            response = self.session.get(f'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByPin?pincode={self.pincode}&date={todayDate}')
+            response = self.session.get(f'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByPin?pincode={self.pincode}&date={todayDate}&vaccine=COVAXIN')
         else:
-            response = self.session.get(f'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict?district_id={self.pincode}&date={todayDate}')
+            response = self.session.get(f'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict?district_id={self.pincode}&date={todayDate}&vaccine=COVAXIN')
 
         if response.ok:
             self.check_slot(response.json())
@@ -298,11 +298,11 @@ class CoWinBook():
     def select_center(self):
         if len(str(self.pincode)) > 5:
             response = self.session.get(
-                'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByPin?pincode={}&date={}'.format(self.pincode,self.todayDate),
+                'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByPin?pincode={}&date={}&vaccine=COVAXIN'.format(self.pincode,self.todayDate),
             ).json()
         else:
             response = self.session.get(
-                'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict?district_id={}&date={}'.format(self.pincode,self.todayDate),
+                'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict?district_id={}&date={}&vaccine=COVAXIN'.format(self.pincode,self.todayDate),
             ).json()
 
         CENTERS = {}
